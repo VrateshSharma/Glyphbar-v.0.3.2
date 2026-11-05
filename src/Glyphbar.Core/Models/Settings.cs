@@ -6,6 +6,7 @@ public enum MultiMonitorMode { PrimaryOnly, AllMonitors }
 public enum ClockFormat { System, TwelveHour, TwentyFourHour }
 public enum AnimationIntensity { Off, Subtle, Full }
 public enum BackdropMode { Opaque, Acrylic }
+public enum DesktopWidgetSide { Left, Right }
 
 /// <summary>Root of the JSON settings document. Plain mutable POCOs keep System.Text.Json simple.</summary>
 public sealed class AppSettings
@@ -61,6 +62,10 @@ public sealed class WidgetSettings
     public int StorageRefreshSeconds { get; set; } = 60;
     public int SystemInfoRefreshSeconds { get; set; } = 5;
     public bool ResourceMonitoringEnabled { get; set; } = true;
+    public bool ShowOnDesktop { get; set; } = true;
+    public DesktopWidgetSide DesktopSide { get; set; } = DesktopWidgetSide.Right;
+    /// <summary>Card fill behind desktop widgets, as a percentage; 0 is fully transparent.</summary>
+    public int DesktopBackgroundPercent { get; set; }
     public BatteryThresholds BatteryThresholds { get; set; } = new();
 }
 

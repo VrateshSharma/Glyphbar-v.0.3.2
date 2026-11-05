@@ -137,6 +137,25 @@ public class TaskbarAndDockTests
     }
 
     [Fact]
+    public void Desktop_widgets_default_to_on_and_fully_transparent()
+    {
+        var w = new WidgetSettings();
+        Assert.True(w.ShowOnDesktop);
+        Assert.Equal(0, w.DesktopBackgroundPercent);
+    }
+
+    [Theory]
+    [InlineData(-5, 0)]
+    [InlineData(40, 40)]
+    [InlineData(500, 100)]
+    public void Desktop_background_is_clamped(int input, int expected)
+    {
+        var s = new AppSettings();
+        s.Widgets.DesktopBackgroundPercent = input;
+        Assert.Equal(expected, SettingsSanitizer.Sanitize(s).Widgets.DesktopBackgroundPercent);
+    }
+
+    [Fact]
     public void Dot_font_covers_everything_the_clock_can_show()
     {
         foreach (char c in "0123456789:%AMPGLYPHBARSETTINGSPOWER ")

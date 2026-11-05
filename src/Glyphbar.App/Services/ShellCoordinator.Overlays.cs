@@ -15,9 +15,25 @@ public sealed partial class ShellCoordinator
     private FloatingWindow? _search, _launcher, _widgetPanel, _power;
     private MainWindow? _main;
     private SettingsWindow? _settingsWindow;
+    private DesktopWidgetsWindow? _desktopWidgets;
     private BatteryLevel? _lastNotifiedLevel;
 
     private T Get<T>() where T : notnull => _services.GetRequiredService<T>();
+
+    /// <summary>Creates, moves or removes the desktop widgets to match the settings.</summary>
+    private void SyncDesktopWidgets()
+    {
+        if (_settings.Current.Widgets.ShowOnDesktop)
+        {
+            if (_desktopWidgets is null) _desktopWidgets = new DesktopWidgetsWindow(Get<WidgetLayoutService>(), _services, _settings);
+            else _desktopWidgets.Relayout();
+        }
+        else
+        {
+            _desktopWidgets?.Dispose();
+            _desktopWidgets = null;
+        }
+    }
 
     public void ShowDashboard()
     {
@@ -79,6 +95,8 @@ public sealed partial class ShellCoordinator
         _search = _launcher = _widgetPanel = _power = null;
         _main?.Destroy();
         _main = null;
+        _desktopWidgets?.Dispose();
+        _desktopWidgets = null;
         _settingsWindow?.Close();
         _settingsWindow = null;
     }

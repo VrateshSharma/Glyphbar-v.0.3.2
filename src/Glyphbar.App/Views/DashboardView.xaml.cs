@@ -21,4 +21,5 @@ public sealed partial class DashboardView : UserControl
     public UIElement DragRegion => TitleArea;
 
     public void SetActive(bool active) => Board.SetActive(active);
+    public void Detach() => Board.Detach();
 }

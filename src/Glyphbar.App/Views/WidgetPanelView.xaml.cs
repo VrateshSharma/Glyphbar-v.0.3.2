@@ -5,7 +5,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Glyphbar.App.Views;
 
-public sealed partial class WidgetPanelView : UserControl, IFloatingContent
+public sealed partial class WidgetPanelView : UserControl, IFloatingContent, IDisposable
 {
     public WidgetPanelView(WidgetLayoutService layout, IServiceProvider services)
     {
@@ -16,4 +16,5 @@ public sealed partial class WidgetPanelView : UserControl, IFloatingContent
 
     public void OnShown() => Board.SetActive(true);
     public void OnHidden() => Board.SetActive(false);
+    public void Dispose() => Board.Detach();
 }

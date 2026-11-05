@@ -201,6 +201,7 @@ public sealed partial class ShellCoordinator
     private void SyncBars()
     {
         if (_stopping) return;
+        SyncDesktopWidgets();
         var settings = _settings.Current;
         var monitors = MonitorInfo.GetAll();
         var wanted = !settings.Taskbar.Visible

@@ -28,7 +28,7 @@ public static class Native
     public const long WS_EX_TOOLWINDOW = 0x80, WS_EX_APPWINDOW = 0x40000, WS_EX_NOACTIVATE = 0x08000000, WS_EX_TOPMOST = 0x8;
 
     public const uint SWP_NOSIZE = 1, SWP_NOMOVE = 2, SWP_NOZORDER = 4, SWP_NOACTIVATE = 0x10, SWP_FRAMECHANGED = 0x20, SWP_SHOWWINDOW = 0x40;
-    public static readonly nint HWND_TOPMOST = -1, HWND_NOTOPMOST = -2, HWND_TOP = 0;
+    public static readonly nint HWND_TOPMOST = -1, HWND_NOTOPMOST = -2, HWND_TOP = 0, HWND_BOTTOM = 1;
 
     public const int SW_HIDE = 0, SW_SHOWNOACTIVATE = 4, SW_SHOW = 5, SW_MINIMIZE = 6, SW_RESTORE = 9;
 

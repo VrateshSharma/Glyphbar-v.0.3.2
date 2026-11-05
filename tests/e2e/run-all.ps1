@@ -3,7 +3,7 @@
 # The power flow uses the dry-run executor, so nothing shuts down.
 $data = Join-Path $env:TEMP 'glyphbar-e2e\gbdata'
 Remove-Item $data -Recurse -Force -ErrorAction SilentlyContinue
-$all = foreach ($suite in '1-search-power-recovery', '2-widgets-settings', '3-hotkeys-focus-idle', '4-media', '5-pointer', '6-recovery') {
+$all = foreach ($suite in '1-search-power-recovery', '2-widgets-settings', '3-hotkeys-focus-idle', '4-media', '5-pointer', '6-recovery', '8-desktop-widgets') {
     "=== $suite"
     & "$PSScriptRoot\$suite.ps1" 2>&1 | Where-Object { "$_" -match '^(PASS|FAIL|idle CPU|===)' }
 }

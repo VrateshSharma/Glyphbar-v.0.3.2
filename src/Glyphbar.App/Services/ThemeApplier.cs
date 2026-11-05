@@ -11,7 +11,10 @@ public static class ThemeApplier
     {
         void Apply() => root.FontFamily = new FontFamily(settings.Current.Appearance.FontFamily);
         Apply();
-        EventHandler handler = (_, _) => Apply();
+        EventHandler handler = (_, _) =>
+        {
+            if (root.XamlRoot is not null) Apply();
+        };
         settings.Changed += handler;
         root.Unloaded += (_, _) => settings.Changed -= handler;
         root.Loaded += (_, _) =>

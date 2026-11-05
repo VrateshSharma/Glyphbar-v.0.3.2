@@ -1,20 +1,20 @@
 # Test results
 
-Final run on 6 November 2026 against package version 1.0.4.0, on the machine Glyphbar was built on: Windows 11 build 26300, x64, one 1920×1080 monitor at 100% scale, with a battery. The Windows taskbar was set to auto-hide, and Flow Launcher was running.
+Final run on 6 November 2026 against package version 1.0.5.0, on the machine Glyphbar was built on: Windows 11 build 26300, x64, one 1920×1080 monitor at 100% scale, with a battery. The Windows taskbar was set to auto-hide, and Flow Launcher was running.
 
 ## Summary
 
 | Suite | Result |
 |---|---|
-| Core unit tests | 96 of 96 passed |
+| Core unit tests | 100 of 100 passed |
 | Data tests (real SQLite and files) | 26 of 26 passed |
 | Platform integration tests (real Windows APIs) | 30 of 30 passed |
-| End-to-end checks on the real desktop | 97 of 97 passed |
+| End-to-end checks on the real desktop, including desktop widgets | 111 of 111 passed |
 | Installed MSIX checks | 17 of 17 passed |
-| Uninstall and reinstall checks | 19 of 19 passed, run one build earlier (below) |
+| Uninstall and reinstall checks | 19 of 19 passed, run on 1.0.3.0 and 1.0.4.0 (below) |
 | Crashes during the final run | 0 |
 
-The uninstall script run covered version 1.0.3.0 being removed and 1.0.4.0 being installed. The only code change between them is that the app catalog tolerates an unavailable database.
+The uninstall run covered removing 1.0.3.0 and installing 1.0.4.0. It was not repeated for 1.0.5.0, which adds desktop widgets.
 
 Reproduce these with:
 
@@ -36,9 +36,9 @@ The end-to-end suites use UI Automation, plus a few seconds of real pointer inpu
 
 | Measure | Result |
 |---|---|
-| CPU over 30 seconds, bar only | Under 0.06% of the machine across four runs; 0.000% on the final build |
-| CPU over 30 seconds, first-run dashboard open | 0.061% |
-| Private memory | About 90 to 105 MB with the bar only; 126 MB with the dashboard open |
+| CPU over 30 seconds, bar only | Under 0.06% of the machine across four runs |
+| CPU over 30 seconds, final build, desktop widgets on | 0.061% |
+| Private memory | About 120 MB with the bar and desktop widgets |
 
 ## Acceptance criteria
 
@@ -75,6 +75,7 @@ The end-to-end suites use UI Automation, plus a few seconds of real pointer inpu
 
 ## Not yet tested
 
+- **Desktop widgets beyond one monitor at 100% scale,** and dragging them to a custom position, which isn't supported yet.
 - **Real power actions.**
 - **A real sign-in with the startup task on.**
 - **A real Explorer restart, sleep and resume, display or scaling changes, and DPI above 100%.**
@@ -97,6 +98,9 @@ All of these are fixed, and each fix was retested.
 
 | Bug | Effect |
 |---|---|
+| Closing a widget window left services pointing at it | Turning desktop widgets off, then changing anything, crashed the app natively |
+| Widgets could rise above apps | `SetWindowPos` silently did nothing with some reference windows, so each move is now verified |
+| Show Desktop left desktop widgets behind | Win+D hid them |
 | Exceptions in dispatcher callbacks and in `async void` startup bypassed all error handling | The app died with `0xc000027b` and no log entry |
 | SQLite WAL's shared-memory file could stay mapped by Windows Error Reporting's snapshot of a crashed process | One crash stopped every later launch until a reboot. The database now uses a rollback journal |
 | Startup stopped at the first failure | An unavailable database cost the user the whole taskbar. Each step now stands alone |

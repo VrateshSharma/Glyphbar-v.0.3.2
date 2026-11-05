@@ -146,6 +146,9 @@ public sealed partial class SettingsViewModel : ObservableObject
     public bool ShowStatus { get => S.Taskbar.ShowSystemStatus; set => Write(s => s.Taskbar.ShowSystemStatus = value); }
 
     // Widgets
+    public bool ShowOnDesktop { get => S.Widgets.ShowOnDesktop; set => Write(s => s.Widgets.ShowOnDesktop = value); }
+    public int DesktopSideIndex { get => (int)S.Widgets.DesktopSide; set => Write(s => s.Widgets.DesktopSide = (DesktopWidgetSide)Math.Max(value, 0)); }
+    public double DesktopBackground { get => S.Widgets.DesktopBackgroundPercent; set => Write(s => s.Widgets.DesktopBackgroundPercent = (int)value); }
     public int ClockFormatIndex { get => (int)S.Widgets.ClockFormat; set => Write(s => s.Widgets.ClockFormat = (ClockFormat)Math.Max(value, 0)); }
     public bool ShowSeconds { get => S.Widgets.ShowSeconds; set => Write(s => s.Widgets.ShowSeconds = value); }
     public bool DotMatrixClock { get => S.Widgets.DotMatrixClock; set => Write(s => s.Widgets.DotMatrixClock = value); }

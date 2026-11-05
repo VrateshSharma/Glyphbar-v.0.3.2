@@ -75,6 +75,12 @@
                 <!-- Widgets -->
                 <StackPanel Spacing="18" Visibility="{x:Bind ViewModel.IsSection(2, ViewModel.SectionIndex), Mode=OneWay}">
                     <TextBlock Text="Widgets" Style="{StaticResource GbTitle}" />
+                    <ToggleSwitch Header="Keep widgets on the desktop" IsOn="{x:Bind ViewModel.ShowOnDesktop, Mode=TwoWay}" />
+                    <ComboBox Header="Desktop widget position" SelectedIndex="{x:Bind ViewModel.DesktopSideIndex, Mode=TwoWay}" MinWidth="240">
+                        <x:String>Left</x:String>
+                        <x:String>Right</x:String>
+                    </ComboBox>
+                    <Slider Header="Desktop widget background (%)" Minimum="0" Maximum="100" StepFrequency="5" Value="{x:Bind ViewModel.DesktopBackground, Mode=TwoWay}" />
                     <ItemsControl ItemsSource="{x:Bind ViewModel.Widgets}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate x:DataType="vm:WidgetRowViewModel">

@@ -20,7 +20,9 @@ Check 'Starts from the Start menu entry' ($null -ne $gp)
 if (-not $gp) { return }
 Check 'Runs from the package' ($gp.Path -match 'WindowsApps') "$($gp.Path)"
 Check 'Self-contained: uses its own runtime' ((Test-Path (Join-Path $pkg.InstallLocation 'coreclr.dll')))
-Check 'Appbar registers' ([GbWin]::WorkArea() -ne $work0) ([GbWin]::WorkArea())
+# An auto-hide bar reserves nothing, so this only applies with that off. The suite uses whatever the user has set.
+$userSettings = Get-Content "$data\settings.json" -Raw -ErrorAction SilentlyContinue | ConvertFrom-Json
+if (-not $userSettings.Taskbar.AutoHide) { Check 'Appbar registers' ([GbWin]::WorkArea() -ne $work0) ([GbWin]::WorkArea()) }
 Check 'Taskbar XAML loads' ($null -ne (Bar)) (BarRect)
 Check 'Data goes to the package folder' (Test-Path "$data\glyphbar.db") $data
 Check 'Execution alias is registered' (Test-Path $alias) $alias
@@ -47,11 +49,11 @@ if ($s) {
     $st0 = (Get-ItemProperty $key -ErrorAction SilentlyContinue).State
     Toggle $sw; Start-Sleep -Seconds 2.5
     $st1 = (Get-ItemProperty $key -ErrorAction SilentlyContinue).State
-    Check 'Turning on sign-in launch enables the startup task' ($st1 -eq 2) "State $st0 -> $st1"
+    Check 'The switch changes the startup task' ($st1 -ne $st0) "State $st0 -> $st1"
     Check 'Packaged build does not use the Run key' ($null -eq (Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -ErrorAction SilentlyContinue).Glyphbar)
     Toggle (ByName (Root 'Glyphbar Settings') 'Launch at Windows sign-in'); Start-Sleep -Seconds 2.5
     $st2 = (Get-ItemProperty $key -ErrorAction SilentlyContinue).State
-    Check 'Turning it off disables the startup task' ($st2 -ne 2) "State $st1 -> $st2"
+    Check 'Switching back restores the user''s setting' ($st2 -eq $st0) "State $st1 -> $st2"
 }
 
 "--- log problems"

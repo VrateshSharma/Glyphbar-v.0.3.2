@@ -145,6 +145,7 @@ public sealed class FloatingWindow : Window
     {
         _destroyed = true;
         (_content as IFloatingContent)?.OnHidden();
+        (_content as IDisposable)?.Dispose();
         Close();
     }
 }

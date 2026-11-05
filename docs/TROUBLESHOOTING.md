@@ -34,6 +34,10 @@ To find what owns Alt+Space, check launchers first: Flow Launcher, PowerToys Run
 
 With auto-hide on, the Windows taskbar slides up when an app flashes for attention or the pointer reaches the edge, and it covers Glyphbar until it hides again. This is Windows behaviour.
 
+## Desktop widgets are hard to read
+
+Widgets have no background by default, so a bright wallpaper can wash them out. Raise **Settings > Widgets > Desktop widget background**. The same page moves them to the left side or turns them off.
+
 ## File search shows no results
 
 The status line says **Windows Search is unavailable** if the provider can't be reached.

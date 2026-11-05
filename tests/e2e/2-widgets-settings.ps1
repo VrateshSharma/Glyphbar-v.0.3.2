@@ -128,16 +128,10 @@ Press $down; Start-Sleep -Seconds 1.2
 $after = Db "select WidgetType,IsEnabled from Widgets order by SortOrder"
 Check 'Widget reorder persists' ($after -match "'Date', 1\), \('Clock'") "$after"
 $s = Root 'Glyphbar Settings'
-$toggles = All $s $CT::Button | Where-Object { $_.Current.Name -eq 'Move later' }
-$sw = All $s $CT::Button
-$checks = $s.FindAll($TS::Descendants, (New-Object System.Windows.Automation.PropertyCondition($AE::IsTogglePatternAvailableProperty, $true)))
-$first = $checks | Select-Object -First 1
-Toggle $first; Start-Sleep -Seconds 1.2
+Toggle (ByName $s 'Show Date widget'); Start-Sleep -Seconds 1.2
 $dis = Db "select WidgetType from Widgets where IsEnabled=0"
 Check 'Widget disable persists' ($dis -match "'Date'") "$dis"
-$s = Root 'Glyphbar Settings'
-$checks = $s.FindAll($TS::Descendants, (New-Object System.Windows.Automation.PropertyCondition($AE::IsTogglePatternAvailableProperty, $true)))
-Toggle ($checks | Select-Object -First 1); Start-Sleep -Seconds 1.2
+Toggle (ByName (Root 'Glyphbar Settings') 'Show Date widget'); Start-Sleep -Seconds 1.2
 
 # Startup
 Section 'System'

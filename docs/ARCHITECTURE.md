@@ -27,6 +27,7 @@ Glyphbar.App        Presentation: WinUI 3 views, view models, windows, DI compos
 | Window | Lifetime |
 |---|---|
 | `TaskbarWindow` | One per monitor, created and removed as monitors and settings change |
+| `DesktopWidgetsWindow` | Created while **Keep widgets on the desktop** is on. Sits on the wallpaper, below every app. |
 | `MainWindow` (dashboard) | Created on first use. Closing it hides it. |
 | `FloatingWindow` (search, launcher, widget panel, power) | Created on first use, then hidden and reused so it reopens instantly. Closes on focus loss or Escape. |
 | `SettingsWindow` | Created when opened, destroyed when closed |
@@ -49,6 +50,14 @@ Nothing blocking runs on the UI thread, and nothing wakes without a reason:
 | SQLite | Pool threads through `GlyphbarDatabase.RunAsync` |
 
 `SystemMonitor` is the only polling loop, a single hosted service rather than a thread per widget. Widgets subscribe in `Activate` and unsubscribe in `Deactivate`, so hidden widgets cost nothing.
+
+## Desktop widgets
+
+The window is only as large as its widgets, because even its transparent parts take clicks, and a full-screen window would block the desktop icons.
+
+`DesktopLayerKeeper` holds it just above the desktop. `HWND_BOTTOM` can't be used, because the desktop is itself a window and that would land behind it. `SetWindowPos` also does nothing with some reference windows, so every move is verified and the next window up is tried. Show Desktop moves the desktop forward without a usable event, so a 400 ms check keeps the widgets with it.
+
+A `WidgetBoard` must be detached before its window closes. The services outlive the window, and touching a closed window's XAML tree is a native access violation that no managed handler can catch.
 
 ## Persistence
 

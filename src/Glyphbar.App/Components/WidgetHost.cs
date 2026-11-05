@@ -70,6 +70,13 @@ public sealed class WidgetHost : UserControl
         return button;
     }
 
+    /// <summary>On the desktop the card can be fully see-through, with the fill set by the user.</summary>
+    public void SetDesktopFill(int percent)
+    {
+        _card.Background = new SolidColorBrush(Windows.UI.Color.FromArgb((byte)Math.Round(percent * 2.55), 0x11, 0x11, 0x11));
+        _card.BorderThickness = new Thickness(percent > 0 ? 1 : 0);
+    }
+
     public void SetEditing(bool editing)
     {
         CanDrag = editing;

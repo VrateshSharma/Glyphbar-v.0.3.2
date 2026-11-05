@@ -63,7 +63,7 @@ public sealed partial class MainWindow : Window
     public void Destroy()
     {
         _destroyed = true;
-        _view.SetActive(false);
+        _view.Detach();
         Close();
     }
 }

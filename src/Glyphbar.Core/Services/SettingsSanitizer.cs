@@ -30,6 +30,8 @@ public static class SettingsSanitizer
         w.StorageRefreshSeconds = Math.Clamp(w.StorageRefreshSeconds, 30, 600);
         w.SystemInfoRefreshSeconds = Math.Clamp(w.SystemInfoRefreshSeconds, 2, 60);
 
+        w.DesktopBackgroundPercent = Math.Clamp(w.DesktopBackgroundPercent, 0, 100);
+
         var b = w.BatteryThresholds;
         b.Critical = Math.Clamp(b.Critical, 1, 98);
         b.Low = Math.Clamp(b.Low, b.Critical + 1, 99);
