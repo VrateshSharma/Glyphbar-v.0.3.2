@@ -1,0 +1,21 @@
+<UserControl
+    x:Class="Glyphbar.App.Components.Widgets.ClockWidget"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:comp="using:Glyphbar.App.Components">
+    <Grid RowSpacing="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="8">
+            <comp:DotMatrixText Text="{x:Bind ViewModel.Time, Mode=OneWay}" DotSize="{x:Bind ViewModel.DotSize, Mode=OneWay}" Gap="{x:Bind ViewModel.DotGap, Mode=OneWay}" Visibility="{x:Bind ViewModel.UseDots, Mode=OneWay}" VerticalAlignment="Center" />
+            <TextBlock Text="{x:Bind ViewModel.Time, Mode=OneWay}" Style="{StaticResource GbDisplay}" FontSize="{x:Bind ViewModel.PlainSize, Mode=OneWay}" Visibility="{x:Bind ViewModel.UsePlain, Mode=OneWay}" VerticalAlignment="Center" />
+            <TextBlock Text="{x:Bind ViewModel.Meridiem, Mode=OneWay}" Style="{StaticResource GbSecondary}" VerticalAlignment="Bottom" />
+        </StackPanel>
+        <StackPanel Grid.Row="1">
+            <TextBlock Text="{x:Bind ViewModel.DayOfWeek, Mode=OneWay}" Style="{StaticResource GbBody}" FontWeight="SemiBold" />
+            <TextBlock Text="{x:Bind ViewModel.FullDate, Mode=OneWay}" Style="{StaticResource GbCaption}" />
+        </StackPanel>
+    </Grid>
+</UserControl>

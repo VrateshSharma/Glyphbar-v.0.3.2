@@ -1,0 +1,116 @@
+<UserControl
+    x:Class="Glyphbar.App.Views.TaskbarView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="using:Glyphbar.App.ViewModels"
+    xmlns:comp="using:Glyphbar.App.Components">
+
+    <Border
+        Background="{x:Bind ViewModel.BarBrush, Mode=OneWay}"
+        BorderBrush="{StaticResource GbBorderBrush}"
+        BorderThickness="1"
+        CornerRadius="{x:Bind ViewModel.BarCorner, Mode=OneWay}">
+        <Grid Padding="8,0" ColumnSpacing="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Orientation="Horizontal" Spacing="2" VerticalAlignment="Center">
+                <Button Style="{StaticResource GbIconButton}" ToolTipService.ToolTip="Launcher" AutomationProperties.Name="Launcher" Command="{x:Bind ViewModel.OpenLauncherCommand}"
+                        Width="{x:Bind ViewModel.ButtonSize, Mode=OneWay}" Height="{x:Bind ViewModel.ButtonSize, Mode=OneWay}">
+                    <comp:DotMatrixText Text="G" DotSize="2.6" Gap="0.9" />
+                </Button>
+                <Button Style="{StaticResource GbIconButton}" ToolTipService.ToolTip="Search" AutomationProperties.Name="Search" Command="{x:Bind ViewModel.OpenSearchCommand}"
+                        Width="{x:Bind ViewModel.ButtonSize, Mode=OneWay}" Height="{x:Bind ViewModel.ButtonSize, Mode=OneWay}">
+                    <FontIcon Glyph="&#xE721;" FontSize="16" />
+                </Button>
+                <Button Style="{StaticResource GbIconButton}" ToolTipService.ToolTip="Widgets" AutomationProperties.Name="Widgets" Command="{x:Bind ViewModel.OpenWidgetsCommand}"
+                        Width="{x:Bind ViewModel.ButtonSize, Mode=OneWay}" Height="{x:Bind ViewModel.ButtonSize, Mode=OneWay}">
+                    <FontIcon Glyph="&#xF0E2;" FontSize="16" />
+                </Button>
+            </StackPanel>
+
+            <ListView
+                x:Name="Dock"
+                Grid.Column="1"
+                HorizontalAlignment="{x:Bind ViewModel.DockAlignment, Mode=OneWay}"
+                VerticalAlignment="Center"
+                ItemsSource="{x:Bind ViewModel.DockItems}"
+                SelectionMode="None"
+                IsItemClickEnabled="True"
+                ItemClick="OnDockItemClick"
+                CanDragItems="True"
+                CanReorderItems="True"
+                AllowDrop="True"
+                DragItemsCompleted="OnDockReordered"
+                ItemContainerStyle="{StaticResource GbDockItem}"
+                ScrollViewer.HorizontalScrollMode="Auto"
+                ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                ScrollViewer.VerticalScrollMode="Disabled"
+                ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsStackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:DockItemViewModel">
+                        <Grid
+                            Width="{x:Bind SlotSize, Mode=OneWay}"
+                            Height="{x:Bind SlotSize, Mode=OneWay}"
+                            Background="Transparent"
+                            ToolTipService.ToolTip="{x:Bind Tooltip, Mode=OneWay}"
+                            RightTapped="OnDockItemRightTapped"
+                            PointerEntered="OnDockItemPointerEntered"
+                            PointerExited="OnDockItemPointerExited">
+                            <Image
+                                Source="{x:Bind Icon, Mode=OneWay}"
+                                Width="{x:Bind IconSize, Mode=OneWay}"
+                                Height="{x:Bind IconSize, Mode=OneWay}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center" />
+                            <Rectangle
+                                Height="3"
+                                RadiusX="1.5"
+                                RadiusY="1.5"
+                                Width="{x:Bind IndicatorWidth, Mode=OneWay}"
+                                Visibility="{x:Bind IndicatorVisibility, Mode=OneWay}"
+                                Fill="{StaticResource GbTextBrush}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Bottom" />
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="2" VerticalAlignment="Center">
+                <Button Style="{StaticResource GbIconButton}" Padding="8,0" Height="{x:Bind ViewModel.ButtonSize, Mode=OneWay}"
+                        Command="{x:Bind ViewModel.OpenWidgetsCommand}"
+                        ToolTipService.ToolTip="{x:Bind ViewModel.BatteryTooltip, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.StatusVisibility, Mode=OneWay}">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <FontIcon Glyph="{x:Bind ViewModel.NetworkGlyph, Mode=OneWay}" FontSize="15" />
+                        <StackPanel Orientation="Horizontal" Spacing="6" Visibility="{x:Bind ViewModel.BatteryVisibility, Mode=OneWay}">
+                            <comp:BatteryGlyph Percent="{x:Bind ViewModel.BatteryPercent, Mode=OneWay}" Charging="{x:Bind ViewModel.BatteryCharging, Mode=OneWay}" Warning="{x:Bind ViewModel.BatteryWarning, Mode=OneWay}" VerticalAlignment="Center" />
+                            <TextBlock Text="{x:Bind ViewModel.BatteryText, Mode=OneWay}" Style="{StaticResource GbCaption}" VerticalAlignment="Center" Foreground="{StaticResource GbTextBrush}" />
+                        </StackPanel>
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource GbIconButton}" Padding="10,0" Height="{x:Bind ViewModel.ButtonSize, Mode=OneWay}"
+                        Command="{x:Bind ViewModel.OpenWidgetsCommand}"
+                        Visibility="{x:Bind ViewModel.ClockVisibility, Mode=OneWay}">
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="{x:Bind ViewModel.TimeText, Mode=OneWay}" Style="{StaticResource GbBody}" FontWeight="SemiBold" HorizontalAlignment="Right" />
+                        <TextBlock Text="{x:Bind ViewModel.DateText, Mode=OneWay}" Style="{StaticResource GbCaption}" HorizontalAlignment="Right" Visibility="{x:Bind ViewModel.DateVisibility, Mode=OneWay}" />
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource GbIconButton}" ToolTipService.ToolTip="Power" AutomationProperties.Name="Power" Command="{x:Bind ViewModel.OpenPowerCommand}"
+                        Width="{x:Bind ViewModel.ButtonSize, Mode=OneWay}" Height="{x:Bind ViewModel.ButtonSize, Mode=OneWay}">
+                    <FontIcon Glyph="&#xE7E8;" FontSize="15" />
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

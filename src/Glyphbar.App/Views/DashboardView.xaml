@@ -1,0 +1,28 @@
+<UserControl
+    x:Class="Glyphbar.App.Views.DashboardView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:comp="using:Glyphbar.App.Components">
+    <Grid Padding="24,0,24,24" RowSpacing="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="52" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid x:Name="TitleArea" Background="Transparent">
+            <comp:DotMatrixText Text="GLYPHBAR" DotSize="3" Gap="1.2" VerticalAlignment="Center" HorizontalAlignment="Left" />
+        </Grid>
+        <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,140,0">
+            <ToggleButton x:Name="EditToggle" Content="Edit layout" IsChecked="{x:Bind ViewModel.IsEditing, Mode=TwoWay}" CornerRadius="10" />
+            <Button Style="{StaticResource GbIconButton}" ToolTipService.ToolTip="Launcher" AutomationProperties.Name="Launcher" Command="{x:Bind ViewModel.OpenLauncherCommand}">
+                <FontIcon Glyph="&#xE71D;" FontSize="15" />
+            </Button>
+            <Button Style="{StaticResource GbIconButton}" ToolTipService.ToolTip="Settings" AutomationProperties.Name="Settings" Command="{x:Bind ViewModel.OpenSettingsCommand}">
+                <FontIcon Glyph="&#xE713;" FontSize="15" />
+            </Button>
+            <Button Style="{StaticResource GbIconButton}" ToolTipService.ToolTip="Power" AutomationProperties.Name="Power" Command="{x:Bind ViewModel.OpenPowerCommand}">
+                <FontIcon Glyph="&#xE7E8;" FontSize="15" />
+            </Button>
+        </StackPanel>
+        <comp:WidgetBoard x:Name="Board" Grid.Row="1" IsEditing="{x:Bind ViewModel.IsEditing, Mode=OneWay}" />
+    </Grid>
+</UserControl>

@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>$(WindowsTfm)</TargetFramework>
+    <TargetPlatformMinVersion>$(WindowsMinVersion)</TargetPlatformMinVersion>
+    <RootNamespace>Glyphbar.App</RootNamespace>
+    <AssemblyName>Glyphbar</AssemblyName>
+    <PlatformTarget>x64</PlatformTarget>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <UseWinUI>true</UseWinUI>
+    <WindowsPackageType>None</WindowsPackageType>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\glyphbar.ico</ApplicationIcon>
+    <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+    <NoWarn>$(NoWarn);CA1416;MVVMTK0045;MVVMTK0049</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(WindowsPackageType)' == 'MSIX'">
+    <EnableMsixTooling>true</EnableMsixTooling>
+    <AppxPackageSigningEnabled>false</AppxPackageSigningEnabled>
+    <GenerateAppInstallerFile>false</GenerateAppInstallerFile>
+    <AppxBundle>Never</AppxBundle>
+    <UapAppxPackageBuildMode>SideloadOnly</UapAppxPackageBuildMode>
+    <GenerateTestArtifacts>false</GenerateTestArtifacts>
+    <AppxPackageDir>$(MSBuildProjectDirectory)\..\..\artifacts\sdk-package\</AppxPackageDir>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(WindowsPackageType)' == 'MSIX'">
+    <AppxManifest Include="..\..\installer\Package.appxmanifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\**\*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Glyphbar.Core\Glyphbar.Core.csproj" />
+    <ProjectReference Include="..\Glyphbar.Data\Glyphbar.Data.csproj" />
+    <ProjectReference Include="..\Glyphbar.Platform\Glyphbar.Platform.csproj" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+  </ItemGroup>
+  <!-- dotnet publish omits the resource index and compiled XAML, without which no page can load. -->
+  <Target Name="IncludeXamlResourcesInPublish" AfterTargets="Publish">
+    <ItemGroup>
+      <XamlRuntimeFile Include="$(OutDir)**\*.xbf" />
+      <XamlRuntimeFile Include="$(OutDir)$(AssemblyName).pri" />
+    </ItemGroup>
+    <Copy SourceFiles="@(XamlRuntimeFile)" DestinationFiles="@(XamlRuntimeFile->'$(PublishDir)%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+</Project>

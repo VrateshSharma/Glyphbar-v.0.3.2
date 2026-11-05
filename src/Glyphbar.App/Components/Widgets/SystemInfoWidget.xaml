@@ -1,0 +1,17 @@
+<UserControl
+    x:Class="Glyphbar.App.Components.Widgets.SystemInfoWidget"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel Spacing="6">
+        <TextBlock Text="SYSTEM" Style="{StaticResource GbLabel}" />
+        <StackPanel Spacing="6" Visibility="{x:Bind ViewModel.MonitoringOn, Mode=OneWay}">
+            <TextBlock Text="{x:Bind ViewModel.Cpu, Mode=OneWay}" Style="{StaticResource GbBody}" />
+            <ProgressBar Value="{x:Bind ViewModel.CpuPercent, Mode=OneWay}" Maximum="100" />
+            <TextBlock Text="{x:Bind ViewModel.Memory, Mode=OneWay}" Style="{StaticResource GbBody}" />
+            <ProgressBar Value="{x:Bind ViewModel.MemoryPercent, Mode=OneWay}" Maximum="100" />
+            <TextBlock Text="{x:Bind ViewModel.Gpu, Mode=OneWay}" Style="{StaticResource GbCaption}" TextTrimming="CharacterEllipsis" />
+            <TextBlock Text="{x:Bind ViewModel.Network, Mode=OneWay}" Style="{StaticResource GbCaption}" TextTrimming="CharacterEllipsis" />
+        </StackPanel>
+        <TextBlock Text="Resource monitoring is off in Settings." Style="{StaticResource GbSecondary}" TextWrapping="Wrap" Visibility="{x:Bind ViewModel.MonitoringOff, Mode=OneWay}" />
+    </StackPanel>
+</UserControl>

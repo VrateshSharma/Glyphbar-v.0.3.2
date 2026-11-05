@@ -1,0 +1,40 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Color x:Key="GbBackground">#080808</Color>
+    <Color x:Key="GbSurface">#111111</Color>
+    <Color x:Key="GbElevated">#181818</Color>
+    <Color x:Key="GbText">#FFFFFF</Color>
+    <Color x:Key="GbTextSecondary">#A0A0A0</Color>
+    <Color x:Key="GbTextMuted">#686868</Color>
+    <Color x:Key="GbBorder">#292929</Color>
+    <Color x:Key="GbHover">#222222</Color>
+    <Color x:Key="GbPressed">#2E2E2E</Color>
+
+    <SolidColorBrush x:Key="GbBackgroundBrush" Color="{StaticResource GbBackground}" />
+    <SolidColorBrush x:Key="GbSurfaceBrush" Color="{StaticResource GbSurface}" />
+    <SolidColorBrush x:Key="GbElevatedBrush" Color="{StaticResource GbElevated}" />
+    <SolidColorBrush x:Key="GbTextBrush" Color="{StaticResource GbText}" />
+    <SolidColorBrush x:Key="GbTextSecondaryBrush" Color="{StaticResource GbTextSecondary}" />
+    <SolidColorBrush x:Key="GbTextMutedBrush" Color="{StaticResource GbTextMuted}" />
+    <SolidColorBrush x:Key="GbBorderBrush" Color="{StaticResource GbBorder}" />
+    <SolidColorBrush x:Key="GbHoverBrush" Color="{StaticResource GbHover}" />
+    <SolidColorBrush x:Key="GbPressedBrush" Color="{StaticResource GbPressed}" />
+
+    <!-- White accent keeps toggles, sliders and selection inside the monochrome palette. -->
+    <Color x:Key="SystemAccentColor">#FFFFFF</Color>
+    <Color x:Key="SystemAccentColorLight1">#FFFFFF</Color>
+    <Color x:Key="SystemAccentColorLight2">#E8E8E8</Color>
+    <Color x:Key="SystemAccentColorLight3">#D0D0D0</Color>
+    <Color x:Key="SystemAccentColorDark1">#D0D0D0</Color>
+    <Color x:Key="SystemAccentColorDark2">#A0A0A0</Color>
+    <Color x:Key="SystemAccentColorDark3">#808080</Color>
+
+    <FontFamily x:Key="GbFont">Segoe UI Variable Text</FontFamily>
+    <FontFamily x:Key="GbDisplayFont">Segoe UI Variable Display</FontFamily>
+    <x:Double x:Key="GbCardRadiusValue">20</x:Double>
+    <CornerRadius x:Key="GbCardRadius">20</CornerRadius>
+    <CornerRadius x:Key="GbPanelRadius">24</CornerRadius>
+    <CornerRadius x:Key="GbControlRadius">10</CornerRadius>
+</ResourceDictionary>

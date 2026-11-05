@@ -1,0 +1,23 @@
+<UserControl
+    x:Class="Glyphbar.App.Components.Widgets.BatteryWidget"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:comp="using:Glyphbar.App.Components">
+    <Grid RowSpacing="4">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" Spacing="8">
+            <TextBlock Text="BATTERY" Style="{StaticResource GbLabel}" VerticalAlignment="Center" />
+            <TextBlock Text="{x:Bind ViewModel.LevelLabel, Mode=OneWay}" Style="{StaticResource GbLabel}" Foreground="{StaticResource GbTextBrush}" VerticalAlignment="Center" />
+        </StackPanel>
+        <StackPanel Grid.Row="1" VerticalAlignment="Center" Spacing="10" Visibility="{x:Bind ViewModel.HasBattery, Mode=OneWay}">
+            <comp:DotMatrixText Text="{x:Bind ViewModel.PercentText, Mode=OneWay}" DotSize="5" Gap="1.6" />
+            <comp:BatteryGlyph Percent="{x:Bind ViewModel.Percent, Mode=OneWay}" Charging="{x:Bind ViewModel.Charging, Mode=OneWay}" Warning="{x:Bind ViewModel.Warning, Mode=OneWay}" HorizontalAlignment="Left" />
+        </StackPanel>
+        <TextBlock Grid.Row="1" Text="No battery detected" Style="{StaticResource GbSecondary}" VerticalAlignment="Center" TextWrapping="Wrap" Visibility="{x:Bind ViewModel.NoBattery, Mode=OneWay}" />
+        <TextBlock Grid.Row="2" Text="{x:Bind ViewModel.Detail, Mode=OneWay}" Style="{StaticResource GbCaption}" TextWrapping="Wrap" MaxLines="2" />
+    </Grid>
+</UserControl>
