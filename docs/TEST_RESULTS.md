@@ -1,6 +1,6 @@
 # Test results
 
-Final run on 6 November 2026 against package version 1.0.6.0, on the machine Glyphbar was built on: Windows 11 build 26300, x64, one 1920×1080 monitor at 100% scale, with a battery. The Windows taskbar was set to auto-hide, and Flow Launcher was running.
+Final run on 6 November 2026 against package version 1.0.7.0, on the machine Glyphbar was built on: Windows 11 build 26300, x64, one 1920×1080 monitor at 100% scale, with a battery. The Windows taskbar was set to auto-hide, and Flow Launcher was running.
 
 ## Summary
 
@@ -9,12 +9,12 @@ Final run on 6 November 2026 against package version 1.0.6.0, on the machine Gly
 | Core unit tests | 104 of 104 passed |
 | Data tests (real SQLite and files) | 26 of 26 passed |
 | Platform integration tests (real Windows APIs) | 30 of 30 passed |
-| End-to-end checks on the real desktop, including desktop widgets | 111 of 111 passed |
-| Installed MSIX checks | 17 of 17 passed |
+| End-to-end checks on the real desktop, in 8 suites | 133 of 133 passed |
+| Installed MSIX checks | 16 of 16 passed |
 | Uninstall and reinstall checks | 19 of 19 passed, run on 1.0.3.0 and 1.0.4.0 (below) |
 | Crashes during the final run | 0 |
 
-The uninstall run covered removing 1.0.3.0 and installing 1.0.4.0. It was not repeated for 1.0.5.0 or 1.0.6.0, which add desktop widgets and their cards. The automated tests and all 111 end-to-end checks ran on the 1.0.6.0 code.
+The uninstall run covered removing 1.0.3.0 and installing 1.0.4.0. It was not repeated for later versions, which add desktop widgets, their cards and the auto-hide slide.
 
 Reproduce these with:
 
@@ -32,12 +32,24 @@ powershell -ExecutionPolicy Bypass -File tests/e2e/7-installed-package.ps1
 
 The end-to-end suites use UI Automation, plus a few seconds of real pointer input. They expect a 1920×1080 primary monitor at 100% scale. Suite 7 needs the MSIX installed, runs with real power actions, and never opens the power menu.
 
+## Auto-hide animation
+
+Measured by sampling the bar's position about every millisecond, with Windows' timer limiting updates to about 60 per second.
+
+| Measure | Result |
+|---|---|
+| Reveal | 9 position changes over 139 ms |
+| Hide | 12 position changes over 186 ms |
+| Largest step | 11 px, including when reversing mid-slide |
+| Longest gap between frames | 31 ms, one dropped frame |
+| Animations off | One jump, no slide |
+
 ## Performance
 
 | Measure | Result |
 |---|---|
 | CPU over 30 seconds, bar only | Under 0.06% of the machine across four runs |
-| CPU over 30 seconds, final build, desktop widgets on | 0.061% |
+| CPU over 30 seconds, final build, desktop widgets on | About 0.1% |
 | Private memory | About 120 MB with the bar and desktop widgets |
 
 ## Acceptance criteria
@@ -121,5 +133,6 @@ All of these are fixed, and each fix was retested.
 
 ## Test weaknesses found and corrected
 
+- `5-pointer.ps1` did not parse for most of this work, and `run-all.ps1` counted that as nothing wrong, so earlier totals left out its checks. `run-all.ps1` now parses every script first and fails any suite that runs no checks.
 - Some checks passed without testing anything: search with no text to read, deleting an event that was never created, and idle CPU reading the wrong process. Each was fixed.
 - "Exits through `--exit`" passed on an app that had already crashed. The suite now confirms the app is alive first.

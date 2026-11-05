@@ -59,6 +59,9 @@ public sealed class AppBarController : IDisposable
     }
 
     public bool IsRegistered => _registered;
+
+    /// <summary>Skips telling the shell about each frame of an auto-hide slide; each notice is a call into Explorer.</summary>
+    public bool SuppressMoveNotices { get; set; }
     public PixelRect WindowRect { get; private set; }
     public PixelRect MonitorBounds { get; private set; }
     public uint Dpi { get; private set; } = 96;
@@ -220,7 +223,7 @@ public sealed class AppBarController : IDisposable
                     SHAppBarMessage(ABM_ACTIVATE, ref data);
                     break;
                 }
-                case Native.WM_WINDOWPOSCHANGED when _registered:
+                case Native.WM_WINDOWPOSCHANGED when _registered && !SuppressMoveNotices:
                 {
                     var data = Data();
                     SHAppBarMessage(ABM_WINDOWPOSCHANGED, ref data);

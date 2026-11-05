@@ -44,7 +44,7 @@ Each system feature sits behind an interface in `Glyphbar.Core.Interfaces`, with
 | `PBT_APMRESUMEAUTOMATIC` | Re-syncs after sleep |
 | `WM_ENDSESSION` | Releases the space synchronously |
 
-**Auto-hide:** `ABM_SETAUTOHIDEBAREX` allows one bar per edge, so it is refused when the Windows taskbar already auto-hides there. The slide behaviour doesn't depend on it. The bar reserves nothing and parks with a 2px sliver on screen. A 200 ms cursor check, which runs only while auto-hide is on, reveals and hides it. Pointer events would not work here, because the Windows taskbar takes the pointer first if it also auto-hides on that edge.
+**Auto-hide:** `ABM_SETAUTOHIDEBAREX` allows one bar per edge, so it is refused when the Windows taskbar already auto-hides there. The slide behaviour doesn't depend on it. The bar reserves nothing and parks with a 2px sliver on screen. A 200 ms cursor check, which runs only while auto-hide is on, reveals and hides it, with an eased slide of 180 ms in and 240 ms out. The slide runs only while the bar is moving, and it is skipped when Windows or Glyphbar animations are off. Pointer events would not work here, because the Windows taskbar takes the pointer first if it also auto-hides on that edge.
 
 ## Transparent windows
 

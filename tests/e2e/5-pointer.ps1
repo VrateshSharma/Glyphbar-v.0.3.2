@@ -1,4 +1,5 @@
-# Focused re-test: auto-hide after using the menu, and what happens during a dock drag.
+# Pointer-driven checks that UI Automation can't do: the context menu, auto-hide after using it, and dragging the dock.
+# Moves the pointer for a few seconds. Every coordinate comes from a live element inside the bar.
 . "$PSScriptRoot\ui.ps1"
 if (-not ('GbMouse' -as [type])) {
 Add-Type @'
@@ -17,8 +18,6 @@ public static class GbMouse {
 }
 '@
 }
-$env:GLYPHBAR_KEEP_OVERLAYS")
-Invoke-Expression $src.Substring($a, $b - $a)
 $env:GLYPHBAR_KEEP_OVERLAYS = '1'
 $start = New-Object GbMouse+P; [void][GbMouse]::GetCursorPos([ref]$start)
 $p = Start-Process $exe -PassThru
@@ -32,6 +31,12 @@ $r = $first.Current.BoundingRectangle
 [GbMouse]::RightClick([int]($r.X + $r.Width / 2), [int]($r.Y + $r.Height / 2))
 Start-Sleep -Seconds 1.2
 $desk = $AE::RootElement
+$menu = $desk.FindAll($TS::Descendants, (New-Object System.Windows.Automation.PropertyCondition($AE::ControlTypeProperty, $CT::MenuItem))) | Where-Object { $_.Current.ProcessId -eq (Gb-Pid) }
+$names = @($menu | ForEach-Object { $_.Current.Name })
+Check 'Right-click opens the context menu' ($names.Count -ge 2) ($names -join ' | ')
+Check 'Menu offers Open and Unpin' (($names -contains 'Open') -and ($names -contains 'Unpin'))
+$barTop = [int]((BarRect) -split ',')[1]
+Check 'Menu is not clipped by the bar window' (@($menu)[0].Current.BoundingRectangle.Y -lt $barTop) "menu y=$(@($menu)[0].Current.BoundingRectangle.Y) bar top=$barTop"
 $unpin = $desk.FindAll($TS::Descendants, (New-Object System.Windows.Automation.PropertyCondition($AE::NameProperty, 'Unpin'))) | Where-Object { $_.Current.ProcessId -eq (Gb-Pid) } | Select-Object -First 1
 Press $unpin; Start-Sleep -Seconds 1.2
 

@@ -34,6 +34,9 @@ public static class Motion
 
     public static bool Enabled => Factor > 0;
 
+    /// <summary>A duration adjusted for the user's animation intensity.</summary>
+    public static double ScaleMs(double ms) => ms * Math.Max(Factor, 0.01);
+
     private static TimeSpan Duration(double ms) => TimeSpan.FromMilliseconds(ms * Math.Max(Factor, 0.01));
 
     private static Visual Prepare(UIElement element)

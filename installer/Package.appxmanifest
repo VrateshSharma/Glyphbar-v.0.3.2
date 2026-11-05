@@ -7,7 +7,7 @@
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
   IgnorableNamespaces="uap uap5 desktop rescap">
 
-  <Identity Name="Glyphbar" Publisher="CN=Glyphbar Local" Version="1.0.6.0" ProcessorArchitecture="x64" />
+  <Identity Name="Glyphbar" Publisher="CN=Glyphbar Local" Version="1.0.7.0" ProcessorArchitecture="x64" />
 
   <Properties>
     <DisplayName>Glyphbar</DisplayName>

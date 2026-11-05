@@ -18,6 +18,7 @@ namespace Glyphbar.App.Views;
 public sealed class TaskbarWindow : Window, IDisposable
 {
     private const int HiddenSliverPixels = 2;
+    private const double RevealMs = 180, HideMs = 240;
     private static readonly TimeSpan HideDelay = TimeSpan.FromMilliseconds(600);
 
     private readonly nint _hwnd;
@@ -27,6 +28,11 @@ public sealed class TaskbarWindow : Window, IDisposable
     private readonly TaskbarViewModel _viewModel;
     private readonly TaskbarView _view;
     private readonly DispatcherQueueTimer _autoHideWatch;
+    private readonly DispatcherQueueTimer _slide;
+    private readonly System.Diagnostics.Stopwatch _slideClock = new();
+    private PixelRect _slideTarget;
+    private int _slideFromTop;
+    private double _slideMs;
     private bool _revealed = true;
     private bool _repositionQueued;
     private bool _disposed;
@@ -67,6 +73,10 @@ public sealed class TaskbarWindow : Window, IDisposable
         _autoHideWatch.Interval = TimeSpan.FromMilliseconds(200);
         _autoHideWatch.Tick += (_, _) => UiDispatcher.Guard(WatchPointer);
 
+        _slide = ui.Queue.CreateTimer();
+        _slide.Interval = TimeSpan.FromMilliseconds(8);
+        _slide.Tick += (_, _) => UiDispatcher.Guard(StepSlide);
+
         AppWindow.Show(false);
         _appBar.Register();
         Relayout();
@@ -81,6 +91,7 @@ public sealed class TaskbarWindow : Window, IDisposable
     public void Relayout()
     {
         if (_disposed) return;
+        StopSlide();
         _appBar.Reposition();
         _revealed = true;
         if (_settings.Current.Taskbar.AutoHide)
@@ -142,7 +153,7 @@ public sealed class TaskbarWindow : Window, IDisposable
             {
                 _revealed = true;
                 _pointerLeft = DateTimeOffset.Now;
-                Move(r);
+                SlideTo(r, RevealMs);
             }
             return;
         }
@@ -156,7 +167,50 @@ public sealed class TaskbarWindow : Window, IDisposable
         if (DateTimeOffset.Now - _pointerLeft < HideDelay) return;
 
         _revealed = false;
-        Move(TaskbarGeometry.HiddenRect(r, _appBar.MonitorBounds, s.Edge, HiddenSliverPixels));
+        SlideTo(TaskbarGeometry.HiddenRect(r, _appBar.MonitorBounds, s.Edge, HiddenSliverPixels), HideMs);
+    }
+
+    /// <summary>
+    /// Starts from wherever the bar is now, so a slide that reverses part-way carries on smoothly. Progress comes from
+    /// elapsed time, not frames, so a busy moment drops frames instead of slowing the bar down.
+    /// </summary>
+    private void SlideTo(PixelRect target, double ms)
+    {
+        if (!Motion.Enabled)
+        {
+            StopSlide();
+            Move(target);
+            return;
+        }
+
+        Native.GetWindowRect(_hwnd, out var now);
+        _slideFromTop = now.Top;
+        _slideTarget = target;
+        _slideMs = Motion.ScaleMs(ms);
+        _slideClock.Restart();
+        _appBar.SuppressMoveNotices = true;
+        _slide.Start();
+    }
+
+    private void StepSlide()
+    {
+        double t = Math.Min(1, _slideClock.Elapsed.TotalMilliseconds / _slideMs);
+        if (t >= 1)
+        {
+            StopSlide();
+            Move(_slideTarget);
+            return;
+        }
+
+        double eased = 1 - Math.Pow(1 - t, 3);   // ease-out: quick start, gentle landing
+        int top = _slideFromTop + (int)Math.Round((_slideTarget.Top - _slideFromTop) * eased);
+        Native.SetWindowPos(_hwnd, 0, _slideTarget.Left, top, 0, 0, Native.SWP_NOSIZE | Native.SWP_NOZORDER | Native.SWP_NOACTIVATE);
+    }
+
+    private void StopSlide()
+    {
+        _slide.Stop();
+        _appBar.SuppressMoveNotices = false;
     }
 
     private void Move(PixelRect r) =>
@@ -167,6 +221,7 @@ public sealed class TaskbarWindow : Window, IDisposable
         if (_disposed) return;
         _disposed = true;
         _autoHideWatch.Stop();
+        StopSlide();
         _appBar.Dispose();
         _viewModel.Dispose();
         Close();
