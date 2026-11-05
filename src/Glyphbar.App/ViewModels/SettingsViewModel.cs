@@ -100,17 +100,19 @@ public sealed partial class SettingsViewModel : ObservableObject
 
     public Visibility IsSection(int index, int current) => index == current ? Visibility.Visible : Visibility.Collapsed;
 
-    private bool _applying;
+    private readonly HashSet<string> _writing = [];
+    private bool _refreshing;
 
     /// <summary>
     /// The guard stops a feedback loop. Raising PropertyChanged pushes the value into two-way bound controls, and a
     /// control that adjusts it, as a Slider does when snapping to its step, calls the setter again. Unguarded, that
-    /// recursed until the stack overflowed.
+    /// recursed until the stack overflowed. It is per property on purpose: while one write waits on the shell, Windows
+    /// can deliver a change to a different setting, and that one must not be lost.
     /// </summary>
     private void Write(Action<AppSettings> change, [CallerMemberName] string? name = null)
     {
-        if (_applying) return;
-        _applying = true;
+        string key = name ?? "";
+        if (_refreshing || !_writing.Add(key)) return;
         try
         {
             _store.Update(change);
@@ -118,7 +120,7 @@ public sealed partial class SettingsViewModel : ObservableObject
         }
         finally
         {
-            _applying = false;
+            _writing.Remove(key);
         }
     }
 
@@ -265,8 +267,8 @@ public sealed partial class SettingsViewModel : ObservableObject
         BuildHotkeys();
 
         // Refreshing every binding must not write each control's value back.
-        _applying = true;
+        _refreshing = true;
         try { OnPropertyChanged(string.Empty); }
-        finally { _applying = false; }
+        finally { _refreshing = false; }
     }
 }

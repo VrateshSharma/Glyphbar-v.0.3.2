@@ -11,7 +11,8 @@ public enum DesktopWidgetSide { Left, Right }
 /// <summary>Root of the JSON settings document. Plain mutable POCOs keep System.Text.Json simple.</summary>
 public sealed class AppSettings
 {
-    public const int CurrentSchemaVersion = 1;
+    public const int CurrentSchemaVersion = 2;
+    public const int DefaultDesktopBackgroundPercent = 65;
 
     public int SchemaVersion { get; set; } = CurrentSchemaVersion;
     public AppearanceSettings Appearance { get; set; } = new();
@@ -64,8 +65,8 @@ public sealed class WidgetSettings
     public bool ResourceMonitoringEnabled { get; set; } = true;
     public bool ShowOnDesktop { get; set; } = true;
     public DesktopWidgetSide DesktopSide { get; set; } = DesktopWidgetSide.Right;
-    /// <summary>Card fill behind desktop widgets, as a percentage; 0 is fully transparent.</summary>
-    public int DesktopBackgroundPercent { get; set; }
+    /// <summary>Card fill behind each desktop widget, as a percentage; 0 is fully transparent.</summary>
+    public int DesktopBackgroundPercent { get; set; } = AppSettings.DefaultDesktopBackgroundPercent;
     public BatteryThresholds BatteryThresholds { get; set; } = new();
 }
 

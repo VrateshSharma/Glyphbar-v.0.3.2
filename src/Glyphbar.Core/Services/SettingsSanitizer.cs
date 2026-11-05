@@ -5,6 +5,19 @@ namespace Glyphbar.Core.Services;
 /// <summary>Clamps values from a hand-edited or older settings file so they cannot break the bar.</summary>
 public static class SettingsSanitizer
 {
+    /// <summary>Upgrades a settings file written by an older version.</summary>
+    private static void Migrate(AppSettings s)
+    {
+        if (s.SchemaVersion >= AppSettings.CurrentSchemaVersion) return;
+
+        // Version 1 defaulted to no card at all, which is unreadable on a bright wallpaper. 0 was the old default
+        // rather than a choice; anything else was set on purpose and is kept.
+        if (s.SchemaVersion < 2 && s.Widgets.DesktopBackgroundPercent == 0)
+            s.Widgets.DesktopBackgroundPercent = AppSettings.DefaultDesktopBackgroundPercent;
+
+        s.SchemaVersion = AppSettings.CurrentSchemaVersion;
+    }
+
     public static AppSettings Sanitize(AppSettings s)
     {
         s.Appearance ??= new();
@@ -16,6 +29,8 @@ public static class SettingsSanitizer
         s.Widgets.BatteryThresholds ??= new();
         s.Search.RecentQueries ??= [];
         s.Search.IndexedLocations ??= [];
+
+        Migrate(s);
 
         var t = s.Taskbar;
         t.Height = Math.Clamp(t.Height, 32, 96);

@@ -137,11 +137,34 @@ public class TaskbarAndDockTests
     }
 
     [Fact]
-    public void Desktop_widgets_default_to_on_and_fully_transparent()
+    public void Desktop_widgets_default_to_on_with_a_readable_card()
     {
         var w = new WidgetSettings();
         Assert.True(w.ShowOnDesktop);
-        Assert.Equal(0, w.DesktopBackgroundPercent);
+        Assert.Equal(65, w.DesktopBackgroundPercent);
+    }
+
+    [Theory]
+    [InlineData(1, 0, 65)]   // the old default is upgraded
+    [InlineData(1, 40, 40)]  // a value someone chose is kept
+    [InlineData(2, 0, 0)]    // on the current version, 0 is a deliberate choice
+    public void Desktop_background_migrates_only_the_old_default(int schema, int stored, int expected)
+    {
+        var s = new AppSettings { SchemaVersion = schema };
+        s.Widgets.DesktopBackgroundPercent = stored;
+        SettingsSanitizer.Sanitize(s);
+        Assert.Equal(expected, s.Widgets.DesktopBackgroundPercent);
+        Assert.Equal(AppSettings.CurrentSchemaVersion, s.SchemaVersion);
+    }
+
+    [Fact]
+    public void Default_card_keeps_white_text_readable_on_a_white_wallpaper()
+    {
+        // The #111111 card blended over pure white, the worst case, compared with white text.
+        double alpha = AppSettings.DefaultDesktopBackgroundPercent / 100d;
+        double channel = (0x11 * alpha + 255 * (1 - alpha)) / 255;
+        double linear = channel <= 0.03928 ? channel / 12.92 : Math.Pow((channel + 0.055) / 1.055, 2.4);
+        Assert.True(1.05 / (linear + 0.05) >= 4.5);
     }
 
     [Theory]

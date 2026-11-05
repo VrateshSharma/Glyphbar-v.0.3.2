@@ -1,4 +1,5 @@
 # Desktop widgets: transparent, behind apps, above the wallpaper, and still there after losing focus or Show Desktop.
+# Desktop widgets: individual translucent cards.
 # Toggles Show Desktop twice, so open windows briefly hide and then return.
 . "$PSScriptRoot\ui.ps1"
 if (-not ('GbZOrder' -as [type])) {
@@ -74,7 +75,7 @@ foreach ($round in 1..3) {
 Check 'Survives switching widgets off and on while changing the layout' ($null -ne (Gb-Pid))
 Check 'Widgets are back after switching on' ((Hwnd 'Glyphbar Desktop Widgets') -ne [IntPtr]::Zero)
 Check 'Background setting is saved' ((Settings).Widgets.DesktopBackgroundPercent -eq 30) "$((Settings).Widgets.DesktopBackgroundPercent)"
-SetRange (ByName (Root 'Glyphbar Settings') 'Desktop widget background (%)') 0; Start-Sleep -Milliseconds 500
+SetRange (ByName (Root 'Glyphbar Settings') 'Desktop widget background (%)') 65; Start-Sleep -Milliseconds 500
 
 # Restart interface must bring them back, and leave no stale board behind.
 $sec = All (Root 'Glyphbar Settings') $CT::ListItem | Where-Object { $_.Current.Name -eq 'About' } | Select-Object -First 1

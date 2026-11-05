@@ -3,7 +3,7 @@
 A monochrome taskbar, launcher and widget environment for Windows 11, inspired by Nothing OS's visual language. Native C# / WinUI 3. All system data comes from real Windows APIs, and everything works offline.
 
 - **Taskbar:** a real shell appbar with a floating or docked style, pinned and running apps, system status and a clock
-- **Widgets:** clock, date, calendar with local events, battery, storage, music control, system info, kept on the desktop with a transparent background
+- **Widgets:** clock, date, calendar with local events, battery, storage, music control, system info, kept on the desktop on translucent cards
 - **Search:** apps, Windows Settings pages, and files and folders from the Windows Search index
 - **Launcher:** every installed app, favourites and recents
 - **Power menu:** lock, sleep, sign out, restart and shut down, with confirmations

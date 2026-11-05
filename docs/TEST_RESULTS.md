@@ -1,12 +1,12 @@
 # Test results
 
-Final run on 6 November 2026 against package version 1.0.5.0, on the machine Glyphbar was built on: Windows 11 build 26300, x64, one 1920×1080 monitor at 100% scale, with a battery. The Windows taskbar was set to auto-hide, and Flow Launcher was running.
+Final run on 6 November 2026 against package version 1.0.6.0, on the machine Glyphbar was built on: Windows 11 build 26300, x64, one 1920×1080 monitor at 100% scale, with a battery. The Windows taskbar was set to auto-hide, and Flow Launcher was running.
 
 ## Summary
 
 | Suite | Result |
 |---|---|
-| Core unit tests | 100 of 100 passed |
+| Core unit tests | 104 of 104 passed |
 | Data tests (real SQLite and files) | 26 of 26 passed |
 | Platform integration tests (real Windows APIs) | 30 of 30 passed |
 | End-to-end checks on the real desktop, including desktop widgets | 111 of 111 passed |
@@ -14,7 +14,7 @@ Final run on 6 November 2026 against package version 1.0.5.0, on the machine Gly
 | Uninstall and reinstall checks | 19 of 19 passed, run on 1.0.3.0 and 1.0.4.0 (below) |
 | Crashes during the final run | 0 |
 
-The uninstall run covered removing 1.0.3.0 and installing 1.0.4.0. It was not repeated for 1.0.5.0, which adds desktop widgets.
+The uninstall run covered removing 1.0.3.0 and installing 1.0.4.0. It was not repeated for 1.0.5.0 or 1.0.6.0, which add desktop widgets and their cards. The automated tests and all 111 end-to-end checks ran on the 1.0.6.0 code.
 
 Reproduce these with:
 
@@ -86,6 +86,10 @@ The end-to-end suites use UI Automation, plus a few seconds of real pointer inpu
 - **Next and previous track.**
 - **Hover animations and the Windows reduced-motion setting,** which were not checked visually.
 
+## Open question: one intermittent desktop widget failure
+
+In the desktop widget suite, switching widgets off and on three times at full speed left them off in 2 of the first 5 runs. A guard that dropped overlapping setting changes was narrowed to fix it. Since then it has failed once in 10 runs, and the failing run didn't capture detail, so it isn't known whether that was a real dropped change or the test missing a click. A slow, step-by-step trace passed every time. If it is real, the effect is that the switch needs flipping again.
+
 ## Open question: the first activation crash
 
 The installed 1.0.0.0 build crashed the first time it received arguments through its Start menu entry. The same action on the fixed build works and logs no exception.
@@ -98,6 +102,7 @@ All of these are fixed, and each fix was retested.
 
 | Bug | Effect |
 |---|---|
+| A guard against a Settings feedback loop blocked every setting, not just the one in the loop | A change arriving during another could be lost |
 | Closing a widget window left services pointing at it | Turning desktop widgets off, then changing anything, crashed the app natively |
 | Widgets could rise above apps | `SetWindowPos` silently did nothing with some reference windows, so each move is now verified |
 | Show Desktop left desktop widgets behind | Win+D hid them |

@@ -36,7 +36,7 @@ With auto-hide on, the Windows taskbar slides up when an app flashes for attenti
 
 ## Desktop widgets are hard to read
 
-Widgets have no background by default, so a bright wallpaper can wash them out. Raise **Settings > Widgets > Desktop widget background**. The same page moves them to the left side or turns them off.
+Each widget has a translucent dark card, set to 65% by default so white text stays readable even on a white wallpaper. If it still looks faint, raise **Settings > Widgets > Desktop widget background**. Setting it to 0 removes the cards. The same page moves widgets to the left side or turns them off.
 
 ## File search shows no results
 
